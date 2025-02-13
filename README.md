@@ -1,6 +1,6 @@
 # Deepseek Thinker MCP Server
 
-An MCP (Model Context Protocol) based Deepseek reasoning server that supports get reasoning content from Deepseek api (OpenAI Mode) or Ollama Server, providing reasoning results to MCP-enabled AI Clients, like Claude Desktop.
+An MCP (Model Context Protocol) based Deepseek reasoning server that supports AI inference through both OpenAI API and Ollama, providing reasoning results to MCP-enabled AI Clients, like Claude Desktop.
 
 ## Core Features
 
@@ -11,7 +11,6 @@ An MCP (Model Context Protocol) based Deepseek reasoning server that supports ge
 - 🎯 **Focused Reasoning**
   - Captures Deepseek's thinking process
   - Provides reasoning output
-
 
 ## Available Tools
 
@@ -76,7 +75,7 @@ Add the following configuration to your `claude_desktop_config.json`:
   }
 }
 ```
-### Local Server configuration
+### Local Server Configuration
 
 ```json
 {
@@ -107,6 +106,11 @@ npm run build
 # Run service
 node build/index.js
 ```
+
+## FAQ
+
+### Response like this: "MCP error -32001: Request timed out"
+This error occurs when the Deepseek API response is too slow or when the reasoning content output is too long, causing the MCP server to timeout.
 
 ## Tech Stack
 
