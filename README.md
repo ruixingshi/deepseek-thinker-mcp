@@ -1,24 +1,17 @@
 # Deepseek Thinker MCP Server
 
-An MCP (Model Context Protocol) based Deepseek reasoning server that supports AI inference through both OpenAI API and Ollama, providing reasoning results to MCP-enabled AI Clients, like Claude Desktop.
+An MCP (Model Context Protocol) based Deepseek reasoning server that supports get reasoning content from Deepseek api (OpenAI Mode) or Ollama Server, providing reasoning results to MCP-enabled AI Clients, like Claude Desktop.
 
 ## Core Features
 
 - 🤖 **Dual Mode Support**
   - OpenAI API mode support
   - Ollama local mode support
-  
-- 🔄 **Streaming Output**
-  - Real-time streaming inference response
-  - Reasoning process capture support
-  
+
 - 🎯 **Focused Reasoning**
   - Captures Deepseek's thinking process
-  - Provides structured reasoning output
-  
-- 🛡️ **Error Handling**
-  - Comprehensive parameter validation
-  - User-friendly error messages
+  - Provides reasoning output
+
 
 ## Available Tools
 
@@ -83,21 +76,8 @@ Add the following configuration to your `claude_desktop_config.json`:
   }
 }
 ```
-
-## Development Setup
-
-```bash
-# Install dependencies
-npm install
-
-# Build project
-npm run build
-
-# Run service
-node build/index.js
-```
-
 ### Local Server configuration
+
 ```json
 {
   "mcpServers": {
@@ -113,6 +93,19 @@ node build/index.js
     }
   }
 }
+```
+
+## Development Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Build project
+npm run build
+
+# Run service
+node build/index.js
 ```
 
 ## Tech Stack
