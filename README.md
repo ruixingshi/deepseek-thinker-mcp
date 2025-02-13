@@ -13,7 +13,7 @@ An MCP (Model Context Protocol) based Deepseek reasoning server that supports AI
   - Reasoning process capture support
   
 - 🎯 **Focused Reasoning**
-  - Captures AI's thinking process
+  - Captures Deepseek's thinking process
   - Provides structured reasoning output
   
 - 🛡️ **Error Handling**
@@ -45,7 +45,7 @@ USE_OLLAMA=true
 
 ## Usage
 
-### Integration with Claude Desktop
+### Integration with AI Client, like Claude Desktop
 Add the following configuration to your `claude_desktop_config.json`:
 
 ```json
@@ -54,6 +54,7 @@ Add the following configuration to your `claude_desktop_config.json`:
     "deepseek-thinker": {
       "command": "npx",
       "args": [
+        "-y",
         "deepseek-thinker-mcp"
       ],
       "env": {
@@ -72,6 +73,7 @@ Add the following configuration to your `claude_desktop_config.json`:
     "deepseek-thinker": {
       "command": "npx",
       "args": [
+        "-y",
         "deepseek-thinker-mcp"
       ],
       "env": {
@@ -95,6 +97,24 @@ npm run build
 node build/index.js
 ```
 
+### Local Server configuration
+```json
+{
+  "mcpServers": {
+    "deepseek-thinker": {
+      "command": "node",
+      "args": [
+        "/your-path/deepseek-thinker-mcp/build/index.js"
+      ],
+      "env": {
+        "API_KEY": "<Your API Key>",
+        "BASE_URL": "<Your Base URL>"
+      }
+    }
+  }
+}
+```
+
 ## Tech Stack
 
 - TypeScript
@@ -106,3 +126,5 @@ node build/index.js
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+
