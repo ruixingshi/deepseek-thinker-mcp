@@ -7,78 +7,50 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import axios from "axios";
 import ollama from 'ollama'
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process?.env?.API_KEY || "sk-K4lSTPT2wxLyv2hXtK7O5xkh2cspBtBiCrNLUTpGRiEMrWpD",  // 直接使用 API key
-  baseURL: process?.env?.BASE_URL || "https://api.lkeap.cloud.tencent.com/v1",
-});
 
-// 定义一个异步函数来处理请求
+// Generate using API
 async function getCompletion(_prompt: string) {
+  const openai = new OpenAI({
+    apiKey: process?.env?.API_KEY,
+    baseURL: process?.env?.BASE_URL,
+  });
+
   try {
     const completion = await openai.chat.completions.create({
       model: 'deepseek-r1',
       messages: [{ role: 'user', content: _prompt }],
-      stream: true  // 改为非流式输出
+      stream: true  // Change to non-streaming output
     });
 
-    let reasoningContent = ''; // 用于收集所有的reasoning_content
-    // 处理流式响应
+    let reasoningContent = ''; // For collecting all reasoning_content
+    // Handle streaming response
     for await (const chunk of completion) {
       if (chunk.choices) {
-        // 如果有reasoning_content，就添加到收集器中
+        // If there's reasoning_content, add it to the collector
         // @ts-ignore
         if (chunk.choices[0]?.delta?.reasoning_content) {
           // @ts-ignore
           reasoningContent += chunk.choices[0].delta.reasoning_content;
         }
-        // 当收到content时，表示reasoning已经完成，返回收集的内容
+        // When content is received, indicating reasoning is complete, return the collected content
         if (chunk.choices[0]?.delta?.content) {
-          return "用给出的思考过程回答问题：" + reasoningContent;
+          return "Answer with given reasoning process: " + reasoningContent;
         }
       }
     }
     // @ts-ignore
-    return "用给出的思考过程回答问题：" + completion.choices[0]?.message?.reasoning_content;
+    return "Answer with given reasoning process: " + completion.choices[0]?.message?.reasoning_content;
   } catch (error) {
-    // console.error("Error occurred:", error);
     return `Error: ${error}`
   }
 }
 
-
-
-const GetDeepseekThinkerSchema = z.object({
-  originPrompt: z.string(),
-});
-
-// const options = {
-//   method: 'POST',
-//   headers: {Authorization: 'Bearer <token>', 'Content-Type': 'application/json'},
-//   body: '{"model":"deepseek-ai/DeepSeek-V3","messages":[{"role":"user","content":"中国大模型行业2025年将会迎来哪些机遇和挑战？"}],"stream":false,"max_tokens":512,"stop":["null"],"temperature":0.7,"top_p":0.7,"top_k":50,"frequency_penalty":0.5,"n":1,"response_format":{"type":"text"},"tools":[{"type":"function","function":{"description":"<string>","name":"<string>","parameters":{},"strict":false}}]}'
-// };
-
-// 一次性输出
-const ollamaGenerate = async (_prompt: string) => {
-  try {
-    const response = await ollama.generate({
-      model: 'deepseek-r1',
-      prompt: _prompt,
-      stream: false,
-    })
-    // 截取<think>和</think>之间的内容
-    const thinkContent = response.response.match(/<think>(.*?)<\/think>/)?.[1]
-    return thinkContent || response.response
-  } catch (e) {
-    return `Error: ${e}`
-  }
-}
-
-// 流式输出
-const ollamaStream = async function* (_prompt: string) {
+// Generate using ollama
+async function getOllamaCompletion(_prompt: string) {
+  let reasoningContent = ''; // For collecting all reasoning_content
   try {
     const response = await ollama.generate({
       model: 'deepseek-r1',
@@ -86,19 +58,27 @@ const ollamaStream = async function* (_prompt: string) {
       stream: true,
     })
     for await (const part of response) {
-      // 直接返回数组，不需要再包装在数组中
-      yield {
-        type: "text",
-        text: part.response,
-      };
+      reasoningContent = reasoningContent + part.response;
+      // Regex matching
+      const regex = /<think>([\s\S]*?)<\/think>/i;
+      // If contains <think> and </think>, collect thinkContent
+      const thinkContent = reasoningContent.match(regex)?.[1]
+      if (thinkContent) {
+        ollama.abort();
+        return "Answer with given reasoning process: " + thinkContent
+      }
     }
-  } catch (e) {
-    yield {
-      type: "text",
-      text: `Error: ${e}`,
-    };
+    return "Answer with given reasoning process: " + reasoningContent
+  } catch (error) {
+    return `Error: ${error}`
   }
 }
+
+
+const GetDeepseekThinkerSchema = z.object({
+  originPrompt: z.string(),
+});
+
 
 // Create server instance
 const server = new Server(
@@ -119,13 +99,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "get-deepseek-thinker",
-        description: "通过deepseek模式思考",
+        description: "think with deepseek",
         inputSchema: {
           type: "object",
           properties: {
             originPrompt: {
               type: "string",
-              description: "用户原始的prompt",
+              description: "user's original prompt",
             },
           },
           required: ["originPrompt"],
@@ -142,19 +122,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     if (name === "get-deepseek-thinker") {
       const { originPrompt } = GetDeepseekThinkerSchema.parse(args);
+
       if (!originPrompt) {
         return {
           content: [
             {
               type: "text",
-              text: "亲，请输入prompt",
+              text: "Please enter a prompt",
             },
           ],
         };
       }
 
-      // 使用一次性输出
-      const result = await getCompletion(originPrompt);
+      let result = '';
+      if(process?.env?.USE_OLLAMA){
+        result = await getOllamaCompletion(originPrompt);
+      }else{
+        result = await getCompletion(originPrompt);
+      }
       return {
         content: [
           {
@@ -192,7 +177,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       content: [
         {
           type: "text",
-          text: "Failed to fetch goal info",
+          text: "Failed to get deepseek thinker",
         },
       ],
     };
@@ -203,7 +188,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Goal Helper Server running on stdio");
+  console.error("Deepseek Thinker Server running on stdio");
 }
 
 main().catch((error) => {

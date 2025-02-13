@@ -1,10 +1,10 @@
 {
-  "name": "@block/deepseek-thinker",
-  "version": "1.0.2",
-  "description": "A MCP server for deepseek thinking",
+  "name": "deepseek-thinker-mcp",
+  "version": "1.0.0",
+  "description": "A MCP server for get deepseek COT",
   "type": "module",
   "bin": {
-    "deepseek-thinker": "./build/index.js"
+    "deepseek-thinker-mcp": "./build/index.js"
   },
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
@@ -15,9 +15,6 @@
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
-    "axios": "^1.7.9",
-    "form-data": "^4.0.1",
-    "fs": "^0.0.1-security",
     "ollama": "^0.5.12",
     "openai": "^4.83.0",
     "os": "^0.1.2",
