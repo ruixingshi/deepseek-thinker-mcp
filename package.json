@@ -1,6 +1,6 @@
 {
   "name": "deepseek-thinker-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A MCP server for get deepseek COT",
   "type": "module",
   "bin": {

@@ -1,6 +1,6 @@
 # Deepseek Thinker MCP Server
 
-An MCP (Model Context Protocol) based Deepseek reasoning server that supports AI inference through both OpenAI API and Ollama, providing reasoning results to MCP-enabled AI Clients, like Claude Desktop.
+ A MCP (Model Context Protocol) provider Deepseek reasoning content to MCP-enabled AI Clients, like Claude Desktop. Supports access to Deepseek's thought processes from the Deepseek API service or from a local Ollama server.
 
 ## Core Features
 
