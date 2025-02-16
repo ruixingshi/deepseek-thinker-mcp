@@ -1,0 +1,25 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - apiKey
+      - baseUrl
+    properties:
+      apiKey:
+        type: string
+        description: The API key for the OpenAI service.
+      baseUrl:
+        type: string
+        description: The base URL for the OpenAI API.
+      useOllama:
+        type: boolean
+        default: false
+        description: Set to true to use the Ollama mode instead of OpenAI API mode.
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    (config) => ({command: 'node', args: ['build/index.js'], env: config.useOllama ? {USE_OLLAMA: 'true'} : {API_KEY: config.apiKey, BASE_URL: config.baseUrl}})

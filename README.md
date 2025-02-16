@@ -1,5 +1,7 @@
 # Deepseek Thinker MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@ruixingshi/deepseek-thinker-mcp)](https://smithery.ai/server/@ruixingshi/deepseek-thinker-mcp)
+
  A MCP (Model Context Protocol) provider Deepseek reasoning content to MCP-enabled AI Clients, like Claude Desktop. Supports access to Deepseek's thought processes from the Deepseek API service or from a local Ollama server.
 
 ## Core Features
@@ -123,5 +125,6 @@ This error occurs when the Deepseek API response is too slow or when the reasoni
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
 
 
