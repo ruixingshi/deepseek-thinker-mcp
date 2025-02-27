@@ -4,6 +4,8 @@
 
  A MCP (Model Context Protocol) provider Deepseek reasoning content to MCP-enabled AI Clients, like Claude Desktop. Supports access to Deepseek's thought processes from the Deepseek API service or from a local Ollama server.
 
+<a href="https://glama.ai/mcp/servers/d7spzsfuwz"><img width="380" height="200" src="https://glama.ai/mcp/servers/d7spzsfuwz/badge" alt="Deepseek Thinker Server MCP server" /></a>
+
 ## Core Features
 
 - 🤖 **Dual Mode Support**
